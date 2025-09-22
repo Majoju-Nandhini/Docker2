@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Build Docker Image'
+                echo 'Building Docker Image...'
                 bat '''
                     docker build -t formappnew .
                 '''
@@ -13,9 +13,10 @@ pipeline {
 
         stage('Run') {
             steps {
-                echo 'Run application in Docker container'
+                echo 'Running application in Docker container...'
                 bat '''
-                    docker rm -f mycontainer || exit 0
+                    docker stop mycontainer || exit 0
+                    docker rm mycontainer || exit 0
                     docker run -d -p 5000:5000 --name mycontainer formappnew
                 '''
             }
@@ -24,10 +25,11 @@ pipeline {
 
     post {
         failure {
-            echo 'Pipeline failed. please check the logs.'
+            echo 'Pipeline failed. Please check the logs.'
         }
         success {
             echo 'Pipeline executed successfully.'
         }
     }
 }
+
